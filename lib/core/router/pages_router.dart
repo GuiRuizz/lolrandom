@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
-import 'package:lolrandom/presentation/pages/settings_page.dart';
+import 'imports_router.dart';
 
-import '../../presentation/pages/home_page.dart';
+
 
 
 
@@ -20,17 +20,17 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/ranking',
       name: 'Ranking - Elo',
-      builder: (context, state) => HomePage(),
+      builder: (context, state) => RankingPage(),
     ),
     GoRoute(
       path: '/historico',
       name: 'Histórico de Partidas',
-      builder: (context, state) => HomePage(),
+      builder: (context, state) => HistoryPage(),
     ),
     GoRoute(
       path: '/skins',
       name: 'Skins',
-      builder: (context, state) => HomePage(),
+      builder: (context, state) => SkinsPage(),
     ),
 
   ],

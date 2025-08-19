@@ -35,6 +35,7 @@ jobs:
           repo: ${{ github.repository }}
           head: develop
           base: main
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Pull Request
         if: env.changes == 'true' && steps.check-pr.outputs.data == '[]'

@@ -14,10 +14,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<String> modos = [
     'Solo',
-    'Time 3x3',
-    'Time 5x5',
+    'Duo',
+    'Trio',
+    'Jhin',
+    'Full Squad',
     '1x1',
     '3x3',
+    'Jhin x Jhin',
     '5x5',
   ];
   String modoSelecionado = 'Solo';

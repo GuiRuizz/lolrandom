@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'core/router/pages_router.dart';
+import 'presentation/controllers/theme_controller.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await Hive.initFlutter();
-  await Supabase.initialize(
-    url: "SUA_URL_SUPABASE",
-    anonKey: "SUA_ANON_KEY",
-  );
-
+void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LoL Comp Generator',
-      home: Scaffold(
-        appBar: AppBar(title: const Text("LoL Comp Generator")),
-        body: const Center(child: Text("Hello Summoner!")),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeControllerProvider);
+
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Meu App',
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: themeMode,
+      routerConfig: router,
     );
   }
 }

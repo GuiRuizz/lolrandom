@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lolrandom/core/utils/logger.dart';
 
 import '../widgets/drawer_personalizado.dart';
-import 'settings_page.dart';
+import '../widgets/pop_up_personalizado.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,15 +29,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('LoL Champions App'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-          ),
+          PopUpMenuPersonalizado(),
         ],
       ),
       body: SingleChildScrollView(
@@ -111,3 +103,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+

@@ -27,7 +27,7 @@ jobs:
 
       - name: Check for existing PR
         id: check-pr
-        uses: octokit/request-action@v1
+        uses: octokit/request-action
         if: env.changes == 'true'
         with:
           route: GET /repos/${{ github.repository }}/pulls

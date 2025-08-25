@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../controllers/theme_controller.dart';
+import '../widgets/drawer_personalizado.dart';
+import '../widgets/pop_up_personalizado.dart';
 
 
 class SettingsPage extends ConsumerWidget {
@@ -12,8 +14,12 @@ class SettingsPage extends ConsumerWidget {
     final themeController = ref.read(themeControllerProvider.notifier);
 
     return Scaffold(
+      drawer: DrawerPersonalizado(),
       appBar: AppBar(
         title: Text('Configurações'),
+        centerTitle: true,
+        actions: [PopUpMenuPersonalizado()],
+
       ),
       body:Column(
           mainAxisSize: MainAxisSize.min,

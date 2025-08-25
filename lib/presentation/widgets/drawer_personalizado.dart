@@ -48,7 +48,7 @@ class DrawerPersonalizado extends StatelessWidget {
       title: Text(title),
       onTap: () {
         Navigator.of(context).pop(); // fecha o drawer
-        context.go(route);           // navega usando GoRouter
+        context.push(route);           // navega usando GoRouter
       },
     );
   }

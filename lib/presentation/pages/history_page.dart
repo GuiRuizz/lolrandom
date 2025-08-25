@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/drawer_personalizado.dart';
+import '../widgets/pop_up_personalizado.dart';
 
 class Match {
   final String id;
@@ -48,7 +49,10 @@ class HistoryPage extends StatelessWidget {
     return Scaffold(
       drawer: DrawerPersonalizado(),
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Histórico de Partidas'),
+        actions: [PopUpMenuPersonalizado()],
+
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),

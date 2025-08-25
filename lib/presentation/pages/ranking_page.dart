@@ -65,46 +65,48 @@ class RankingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final players = _mockTopPlayers();
 
-    return Scaffold(
-      drawer: DrawerPersonalizado(),
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Ranking',
-              style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
+    return SafeArea(
+      child: Scaffold(
+        drawer: DrawerPersonalizado(),
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Ranking',
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
               ),
-            ),
-            Icon(Icons.emoji_events, color: Colors.yellow[700]),
-          ],
+              Icon(Icons.emoji_events, color: Colors.yellow[700]),
+            ],
+          ),
+          actions: [PopUpMenuPersonalizado()],
         ),
-        actions: [PopUpMenuPersonalizado()],
-      ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(10),
-        itemCount: players.length,
-        separatorBuilder: (_, __) => const Divider(),
-        itemBuilder: (context, index) {
-          final player = players[index];
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor: _eloColor(player.elo),
-              child: Text(player.rank.toString(), style: const TextStyle(color: Colors.white)),
-            ),
-            title: Text(player.nickname),
-            subtitle: Text('${player.elo} • ${player.points} LP'),
-            trailing: Icon(Icons.emoji_events, color: _eloColor(player.elo)),
-            onTap: () {
-              AppLogger.i('Jogador selecionado: ${player.nickname}');
-              // Aqui você pode adicionar a navegação para uma página de detalhes do jogador, se necessário
-            },
-          );
-        },
+        body: ListView.separated(
+          padding: const EdgeInsets.all(10),
+          itemCount: players.length,
+          separatorBuilder: (_, __) => const Divider(),
+          itemBuilder: (context, index) {
+            final player = players[index];
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundColor: _eloColor(player.elo),
+                child: Text(player.rank.toString(), style: const TextStyle(color: Colors.white)),
+              ),
+              title: Text(player.nickname),
+              subtitle: Text('${player.elo} • ${player.points} LP'),
+              trailing: Icon(Icons.emoji_events, color: _eloColor(player.elo)),
+              onTap: () {
+                AppLogger.i('Jogador selecionado: ${player.nickname}');
+                // Aqui você pode adicionar a navegação para uma página de detalhes do jogador, se necessário
+              },
+            );
+          },
+        ),
       ),
     );
   }

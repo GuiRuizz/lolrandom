@@ -6,7 +6,7 @@ extension ConfigEnumExtension on ConfigEnum {
   String get label {
     switch (this) {
       case ConfigEnum.sistema:
-        return 'Seguir o sistema';
+        return 'Sistema';
       case ConfigEnum.claro:
         return 'Sempre Claro';
       case ConfigEnum.escuro:

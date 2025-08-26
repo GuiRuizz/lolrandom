@@ -32,6 +32,11 @@ final GoRouter router = GoRouter(
       name: 'Skins',
       builder: (context, state) => SkinsPage(),
     ),
+    GoRoute(
+      path: '/search',
+      name: 'Buscar Campeão',
+      builder: (context, state) => SearchPage(),
+    ),
 
   ],
 );

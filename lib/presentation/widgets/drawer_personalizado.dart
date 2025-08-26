@@ -33,6 +33,7 @@ class DrawerPersonalizado extends StatelessWidget {
               _drawerItem(drawerContext, 'Página Inicial', '/'),
               _drawerItem(drawerContext, 'Ranking - Elo', '/ranking'),
               _drawerItem(drawerContext, 'Histórico de Partidas', '/historico'),
+              _drawerItem(drawerContext, 'Campeões', '/search'),
               _drawerItem(drawerContext, 'Skins', '/skins'),
               _drawerItem(drawerContext, 'Configurações', '/configuracoes'),
             ],

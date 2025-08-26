@@ -1,4 +1,5 @@
 class ApiConstants {
-  static const riotApiKey = "RGAPI-eb4b318b-4c78-4073-8b01-5cc3018ee300";
   static const baseUrl = "https://br1.api.riotgames.com/lol";
+  static const String summonerByName = "/lol/summoner/v4/summoners/by-name";
+  static const String matchHistory = "/lol/match/v5/matches/by-puuid";
 }

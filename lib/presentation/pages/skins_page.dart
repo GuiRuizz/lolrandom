@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/drawer_personalizado.dart';
+import '../widgets/pop_up_personalizado.dart';
+
 class SkinsPage extends StatefulWidget {
   const SkinsPage({super.key});
 
@@ -54,9 +57,13 @@ class _SkinsPageState extends State<SkinsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: DrawerPersonalizado(),
       appBar: AppBar(
-        title: const Text("Skins do LoL"),
+        title: const Text('Skins de Campeões'),
         centerTitle: true,
+        actions: [
+          PopUpMenuPersonalizado(),
+        ],
       ),
       body: Column(
         children: [

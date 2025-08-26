@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lolrandom/core/enum/modos_enum.dart';
 import 'package:lolrandom/core/utils/logger.dart';
 
 import '../widgets/drawer_personalizado.dart';
@@ -12,17 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<String> modos = [
-    'Solo',
-    'Duo',
-    'Trio',
-    'Jhin',
-    'Full Squad',
-    '1x1',
-    '3x3',
-    'Jhin x Jhin',
-    '5x5',
-  ];
+  final List<String> modos = ModosEnum.values.map((e) => e.name).toList();
+   
   String modoSelecionado = 'Solo';
 
   @override

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lolrandom/core/enum/modos_enum.dart';
 import 'package:lolrandom/core/utils/logger.dart';
+import 'package:lolrandom/domain/entities/champion.dart';
 import 'package:lolrandom/presentation/controllers/composition_controller.dart';
-import '../../data/model/champion_model.dart';
+import '../../domain/entities/champion_item.dart';
 import '../../providers/items_providers.dart';
 import '../controllers/helpers/composition_helpers.dart';
 import '../widgets/drawer_personalizado.dart';
@@ -22,8 +23,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   final List<String> modos = ModosEnum.values.map((e) => e.name).toList();
   String modoSelecionado = 'Solo';
   bool showChampions = false;
-
-  Map<String, List<ItemModel>> campeaoItens = {};
+  List<ChampionWithItems> campeoesGerados = [];
+  List<Champion> campeoesSelecionados = [];
 
   @override
   Widget build(BuildContext context) {
@@ -108,25 +109,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                               onTap: () {
                                 setState(() {
                                   showChampions = true;
+                                  campeoesGerados.clear();
 
-                                  // Gera os itens aleatórios por campeão
                                   final random = Random();
-                                  campeaoItens.clear();
-
                                   final quantidade = quantidadePorModo(
                                     modoSelecionado.toModosEnum(),
                                   );
+                                  final shuffledChampions = List<Champion>.from(
+                                    listaDeChampions,
+                                  )..shuffle();
                                   int champIndex = 0;
 
                                   quantidade.forEach((rota, qtd) {
                                     for (int i = 0; i < qtd; i++) {
                                       final champ =
-                                          listaDeChampions[champIndex %
-                                              listaDeChampions.length];
+                                          shuffledChampions[champIndex %
+                                              shuffledChampions.length];
                                       champIndex++;
 
-                                      // 6 itens aleatórios, obrigatoriamente uma bota
-                                      final itensAleatorios = <ItemModel>[];
                                       final boots = listaDeItems
                                           .where(
                                             (i) => i.name
@@ -134,31 +134,32 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                 .contains('boot'),
                                           )
                                           .toList();
+                                      final otherItems = listaDeItems
+                                          .where(
+                                            (i) => !i.name
+                                                .toLowerCase()
+                                                .contains('boot'),
+                                          )
+                                          .toList();
+
+                                      final items = <ItemModel>[];
                                       if (boots.isNotEmpty) {
-                                        itensAleatorios.add(
+                                        items.add(
                                           boots[random.nextInt(boots.length)],
                                         );
                                       }
+                                      otherItems.shuffle();
+                                      items.addAll(otherItems.take(5));
 
-                                      while (itensAleatorios.length < 6) {
-                                        final item =
-                                            listaDeItems[random.nextInt(
-                                              listaDeItems.length,
-                                            )];
-                                        if (!itensAleatorios.contains(item)) {
-                                          itensAleatorios.add(item);
-                                        }
-                                      }
-
-                                      campeaoItens[champ.name] =
-                                          itensAleatorios;
+                                      campeoesGerados.add(
+                                        ChampionWithItems(
+                                          champion: champ,
+                                          items: items,
+                                        ),
+                                      );
                                     }
                                   });
                                 });
-
-                                AppLogger.i(
-                                  'Mapa clicado no modo: $modoSelecionado',
-                                );
                               },
                               splashColor: Colors.black.withAlpha(20),
                               highlightColor: Colors.transparent,
@@ -168,10 +169,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                           if (showChampions) ...[
                             // Campeões sobre o mapa
-                            ...getChampionsWidgets(
-                              listaDeChampions,
-                              quantidadePorModo(modoSelecionado.toModosEnum()),
+                            ...getChampionsWidgetsFromGenerated(
+                              campeoesGerados,
                               rotaPosicoes,
+                              quantidadePorModo(modoSelecionado.toModosEnum()),
                             ),
                           ],
                         ],
@@ -183,74 +184,37 @@ class _HomePageState extends ConsumerState<HomePage> {
                   // Tabela com campeão + itens
                   Padding(
                     padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: campeaoItens.entries.map((entry) {
-                        final champName = entry.key;
-                        final items = entry.value;
-
-                        // Procura o objeto Champion para pegar a imagem
-                        final champ = listaDeChampions.firstWhere(
-                          (c) => c.name == champName,
-                          orElse: () => ChampionModel(
-                            id: listaDeChampions.first.id,
-                            name: listaDeChampions.first.name,
-                            title: listaDeChampions.first.title,
-                            imageUrl: listaDeChampions.first.imageUrl,
-                          ),
-                        );
-
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
+                    child: // Usa a lista campeoesSelecionados para garantir correspondência exata
+                    Column(
+                      children: campeoesGerados.map((cwi) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Card(
                             child: Column(
                               children: [
-                                // Linha com imagem + nome do campeão
                                 Row(
                                   children: [
                                     Image.network(
-                                      champ.imageUrl,
+                                      cwi.champion.imageUrl,
                                       width: 64,
                                       height: 64,
                                     ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      champ.name,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    const SizedBox(width: 25),
+                                    Text(cwi.champion.name),
                                   ],
                                 ),
                                 const SizedBox(height: 10),
-
-                                // Linha com os 6 itens
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: items.map((item) {
-                                    return Column(
-                                      children: [
-                                        Image.network(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: cwi.items
+                                      .map(
+                                        (item) => Image.network(
                                           item.imageUrl,
                                           width: 48,
                                           height: 48,
                                         ),
-                                        SizedBox(
-                                          width: 50,
-                                          child: Text(
-                                            item.name,
-                                            style: const TextStyle(
-                                              fontSize: 10,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }).toList(),
+                                      )
+                                      .toList(),
                                 ),
                               ],
                             ),

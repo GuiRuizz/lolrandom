@@ -47,28 +47,21 @@ Map<String, int> quantidadePorModo(ModosEnum modo) {
 }
 
 /// Cria widgets de campeões reais com imagens da API
-List<Widget> getChampionsWidgets(
-    List<Champion> champions,
-    Map<String, int> quantidade,
+List<Widget> getChampionsWidgetsFromGenerated(
+    List<ChampionWithItems> campeoesGerados,
     Map<String, Offset> posicoes,
+    Map<String, int> quantidade,
 ) {
   List<Widget> widgets = [];
-  
-  // Copia e embaralha a lista de campeões
-  final shuffledChampions = List<Champion>.from(champions)..shuffle();
-  int champIndex = 0;
+  int index = 0;
 
   quantidade.forEach((rota, qtd) {
     final pos = posicoes[rota] ?? const Offset(150, 150);
 
     for (int i = 0; i < qtd; i++) {
-      // Se acabar a lista, volta para o início (opcional)
-      if (champIndex >= shuffledChampions.length) {
-        champIndex = 0;
-      }
-
-      final champ = shuffledChampions[champIndex];
-      champIndex++;
+      if (index >= campeoesGerados.length) index = 0;
+      final champ = campeoesGerados[index].champion;
+      index++;
 
       widgets.add(Positioned(
         left: pos.dx + i * 25,
@@ -83,6 +76,7 @@ List<Widget> getChampionsWidgets(
 
   return widgets;
 }
+
 
 /// Gera 6 itens aleatórios por campeão, garantindo pelo menos uma bota
 List<List<Item>> generateItemsForChampionsApi(

@@ -9,6 +9,11 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
+      name: 'Login',
+      builder: (context, state) => LoginPage(),
+    ),
+    GoRoute(
+      path: '/inicial',
       name: 'Página Inicial',
       builder: (context, state) => HomePage(),
     ),
@@ -31,6 +36,11 @@ final GoRouter router = GoRouter(
       path: '/skins',
       name: 'Skins',
       builder: (context, state) => SkinsPage(),
+    ),
+    GoRoute(
+      path: '/search',
+      name: 'Buscar Campeão',
+      builder: (context, state) => SearchPage(),
     ),
 
   ],

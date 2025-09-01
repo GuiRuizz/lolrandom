@@ -1,13 +1,11 @@
-class Champion {
+class Item {
   final String id;
   final String name;
-  final String title;
   final String imageUrl; 
 
-  Champion({
+  Item({
     required this.id,
     required this.name,
-    required this.title,
     required this.imageUrl,
   });
 }

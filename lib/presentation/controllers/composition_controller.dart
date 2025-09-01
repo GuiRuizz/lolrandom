@@ -1,24 +1,23 @@
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../../data/repositories/composition_repository.dart';
+import '../../domain/entities/champion.dart';
+import '../../data/repositories/composition_repository_impl.dart';
 import '../../data/datasources/lol_api_datasource.dart';
+import '../../core/dio/dio_provider.dart';
 
-final compositionProvider = StateNotifierProvider<CompositionController, AsyncValue<List<dynamic>>>(
-  (ref) => CompositionController(ref),
-);
+final compositionRepositoryProvider = Provider<CompositionRepository>((ref) {
+  final dio = ref.read(dioProvider);
+  final datasource = LolApiDatasource(dio);
+  return CompositionRepositoryImpl(datasource, version: '');
+});
 
-class CompositionController extends StateNotifier<AsyncValue<List<dynamic>>> {
-  final Ref ref;
-  CompositionController(this.ref) : super(const AsyncValue.data([]));
+final championsProvider = FutureProvider<List<Champion>>((ref) async {
+  final dio = ref.read(dioProvider);
+  final datasource = LolApiDatasource(dio);
 
-  Future<void> fetchChampions() async {
-    state = const AsyncValue.loading();
-    try {
-      final champions = await LolApiDataSource().getChampions();
-      state = AsyncValue.data(champions);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-}
+  // Pega a versão mais recente
+  final latestVersion = await datasource.getLatestVersion();
+
+  final repository = CompositionRepositoryImpl(datasource, version: latestVersion);
+  return repository.getChampions();
+});

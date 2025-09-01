@@ -1,16 +1,19 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../../../core/enum/modos_enum.dart';
 import '../../../domain/entities/champion.dart';
+import '../../../domain/entities/champion_item.dart';
+import '../../../domain/entities/item.dart';
 
 /// Posicionamento aproximado das rotas no mapa
 final Map<String, Offset> rotaPosicoes = {
-  'top': const Offset(30, 50),
-  'mid': const Offset(130, 180),
-  'midInimigo': const Offset(200, 130),
-  'support': const Offset(280, 300),
-  'jungle': const Offset(80, 150),
-  'adc': const Offset(220, 300),
+  'top': const Offset(10, 30),
+  'mid': const Offset(100, 180),
+  'midInimigo': const Offset(180, 100),
+  'support': const Offset(260, 250),
+  'jungle': const Offset(40, 120),
+  'adc': const Offset(180, 250),
 };
 
 /// Converte string do modo selecionado para o enum
@@ -43,24 +46,36 @@ Map<String, int> quantidadePorModo(ModosEnum modo) {
   }
 }
 
-/// Cria widgets de personagens com círculos coloridos (placeholder)
-List<Widget> getPersonagensForModo(ModosEnum modo) {
-  final quantidade = quantidadePorModo(modo);
+/// Cria widgets de campeões reais com imagens da API
+List<Widget> getChampionsWidgets(
+    List<Champion> champions,
+    Map<String, int> quantidade,
+    Map<String, Offset> posicoes,
+) {
   List<Widget> widgets = [];
+  
+  // Copia e embaralha a lista de campeões
+  final shuffledChampions = List<Champion>.from(champions)..shuffle();
+  int champIndex = 0;
 
   quantidade.forEach((rota, qtd) {
-    final pos = rotaPosicoes[rota] ?? const Offset(150, 150);
+    final pos = posicoes[rota] ?? const Offset(150, 150);
+
     for (int i = 0; i < qtd; i++) {
+      // Se acabar a lista, volta para o início (opcional)
+      if (champIndex >= shuffledChampions.length) {
+        champIndex = 0;
+      }
+
+      final champ = shuffledChampions[champIndex];
+      champIndex++;
+
       widgets.add(Positioned(
-        left: pos.dx + i * 20,
+        left: pos.dx + i * 25,
         top: pos.dy,
         child: CircleAvatar(
-          radius: 15,
-          backgroundColor: Colors.blueAccent,
-          child: Text(
-            (i + 1).toString(),
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-          ),
+          radius: 40,
+          backgroundImage: NetworkImage(champ.imageUrl),
         ),
       ));
     }
@@ -69,31 +84,62 @@ List<Widget> getPersonagensForModo(ModosEnum modo) {
   return widgets;
 }
 
-/// Cria widgets de campeões reais com imagens da API
-List<Widget> getChampionsWidgets(
-    List<Champion> champions,
-    Map<String, int> quantidade,
-    Map<String, Offset> posicoes,
+/// Gera 6 itens aleatórios por campeão, garantindo pelo menos uma bota
+List<List<Item>> generateItemsForChampionsApi(
+    List<Item> allItems, int numChampions) {
+  final random = Random();
+  final boots = allItems.where((i) => i.name.toLowerCase().contains('boot')).toList();
+  final otherItems = allItems.where((i) => !i.name.toLowerCase().contains('boot')).toList();
+
+  List<List<Item>> itemsPerChampion = [];
+
+  for (int i = 0; i < numChampions; i++) {
+    List<Item> items = [];
+
+    // Adiciona uma bota
+    items.add(boots[random.nextInt(boots.length)]);
+
+    // Adiciona mais 5 itens aleatórios
+    final shuffled = List<Item>.from(otherItems)..shuffle();
+    items.addAll(shuffled.take(5));
+
+    itemsPerChampion.add(items);
+  }
+
+  return itemsPerChampion;
+}
+
+List<ChampionWithItems> generateChampionsWithItems(
+  List<Champion> champions,
+  List<Item> allItems,
+  Map<String, int> quantidadePorRota,
 ) {
   final random = Random();
-  List<Widget> widgets = [];
+  final boots = allItems.where((i) => i.name.toLowerCase().contains('boot')).toList();
+  final otherItems = allItems.where((i) => !i.name.toLowerCase().contains('boot')).toList();
 
-  quantidade.forEach((rota, qtd) {
-    final pos = posicoes[rota] ?? const Offset(150, 150);
+  final shuffledChampions = List<Champion>.from(champions)..shuffle();
+  int champIndex = 0;
 
+  List<ChampionWithItems> result = [];
+
+  quantidadePorRota.forEach((rota, qtd) {
     for (int i = 0; i < qtd; i++) {
-      final champ = champions[random.nextInt(champions.length)];
+      if (champIndex >= shuffledChampions.length) champIndex = 0;
+      final champ = shuffledChampions[champIndex];
+      champIndex++;
 
-      widgets.add(Positioned(
-        left: pos.dx + i * 25,
-        top: pos.dy,
-        child: CircleAvatar(
-          radius: 20,
-          backgroundImage: NetworkImage(champ.imageUrl),
-        ),
-      ));
+      // Gera itens aleatórios
+      List<Item> items = [];
+      if (boots.isNotEmpty) {
+        items.add(boots[random.nextInt(boots.length)]);
+      }
+      final shuffled = List<Item>.from(otherItems)..shuffle();
+      items.addAll(shuffled.take(5));
+
+      result.add(ChampionWithItems(champion: champ, items: items));
     }
   });
 
-  return widgets;
+  return result;
 }

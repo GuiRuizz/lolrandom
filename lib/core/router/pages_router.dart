@@ -9,6 +9,11 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
+      name: 'Login',
+      builder: (context, state) => LoginPage(),
+    ),
+    GoRoute(
+      path: '/inicial',
       name: 'Página Inicial',
       builder: (context, state) => HomePage(),
     ),

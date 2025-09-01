@@ -30,7 +30,7 @@ class DrawerPersonalizado extends StatelessWidget {
                   ],
                 ),
               ),
-              _drawerItem(drawerContext, 'Página Inicial', '/'),
+              _drawerItem(drawerContext, 'Página Inicial', '/inicial'),
               _drawerItem(drawerContext, 'Ranking - Elo', '/ranking'),
               _drawerItem(drawerContext, 'Histórico de Partidas', '/historico'),
               _drawerItem(drawerContext, 'Campeões', '/search'),
